@@ -3,10 +3,15 @@ const videoListElement = document.getElementById('video-list');
 const albumImageElement = document.getElementById('album-image');
 const searchInput = document.getElementById('search-input');
 const searchButton = document.getElementById('search-button');
+const loadMoreButton = document.getElementById('load-more');
+const thumbnailModeButton = document.getElementById('thumbnail-mode');
+const videoModeButton = document.getElementById('video-mode');
 let currentVideoIndex = 0;
 let videos = [];
 let player;
 let repeat = false;
+let nextPageToken = '';
+let isThumbnailMode = true;
 
 document.getElementById('play').addEventListener('click', () => {
     playVideo(currentVideoIndex);
@@ -32,17 +37,38 @@ searchButton.addEventListener('click', () => {
     searchVideos(query);
 });
 
+loadMoreButton.addEventListener('click', () => {
+    fetchPopularVideos(nextPageToken);
+});
+
+thumbnailModeButton.addEventListener('click', () => {
+    isThumbnailMode = true;
+    document.getElementById('player').style.display = 'none';
+    document.querySelector('.album-cover').style.display = 'block';
+});
+
+videoModeButton.addEventListener('click', () => {
+    isThumbnailMode = false;
+    document.getElementById('player').style.display = 'block';
+    document.querySelector('.album-cover').style.display = 'none';
+});
+
 function playVideo(index) {
     const video = videos[index];
     albumImageElement.src = video.snippet.thumbnails.high.url;
-    player.loadVideoById(video.id.videoId);
+    if (isThumbnailMode) {
+        player.cueVideoById(video.id.videoId);
+    } else {
+        player.loadVideoById(video.id.videoId);
+    }
 }
 
-function fetchPopularVideos() {
-    fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&chart=mostPopular&regionCode=KR&type=video&videoCategoryId=10&maxResults=10&key=${API_KEY}`)
+function fetchPopularVideos(pageToken = '') {
+    fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&chart=mostPopular&regionCode=KR&type=video&videoCategoryId=10&maxResults=10&pageToken=${pageToken}&key=${API_KEY}`)
         .then(response => response.json())
         .then(data => {
-            videos = data.items;
+            videos = videos.concat(data.items);
+            nextPageToken = data.nextPageToken;
             displayVideoList();
         })
         .catch(error => console.error('Error:', error));
@@ -79,8 +105,8 @@ function displayVideoList() {
 
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-        height: '0',
-        width: '0',
+        height: '390',
+        width: '640',
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
