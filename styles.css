@@ -48,6 +48,26 @@ h1 {
     background-color: #1ed760;
 }
 
+.mode-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.mode-toggle button {
+    background-color: #1db954;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.mode-toggle button:hover {
+    background-color: #1ed760;
+}
+
 .player {
     margin-bottom: 20px;
 }
@@ -109,6 +129,20 @@ button:hover {
 
 .playlist .video-info {
     margin-top: 10px;
+}
+
+#load-more {
+    background-color: #1db954;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+#load-more:hover {
+    background-color: #1ed760;
 }
 
 @keyframes rotate {
